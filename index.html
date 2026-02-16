@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> KJ COLLEGE DIV F  PROJECT COST CALCULATOR OF CIVIL</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for visual breakdown -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: #333;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+
+        /* Card Hover Effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-focus:focus {
+            ring: 2px;
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .shadow-lg { box-shadow: none !important; }
+            .glass-panel { border: 1px solid #ddd; box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto mb-8 text-center animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
+            <i class="fa-solid fa-house-chimney text-blue-600 mr-2"></i> KJCOEMR_ <span class="text-blue-600">DIV_F_BATCH-7_PROJECT</span>
+        </h1>
+        <p class="text-gray-600 text-lg">Calculate your cost to make your dream home</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Input Section -->
+        <div class="lg:col-span-4 glass-panel rounded-2xl p-6 md:p-8 h-fit animate-fade-in" style="animation-delay: 0.1s;">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center text-gray-800">
+                <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                Project Details
+            </h2>
+
+            <form id="calculatorForm" class="space-y-5">
+                <!-- District -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Select District</label>
+                    <div class="relative">
+                        <select id="district" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10 appearance-none input-focus transition-all" required>
+                            <option value="" disabled selected>Choose a district...</option>
+                            <option value="mumbai">Mumbai (Metro Region)</option>
+                            <option value="pune">Pune</option>
+                            <option value="nagpur">Nagpur</option>
+                            <option value="nashik">Nashik</option>
+                            <option value="aurangabad">Aurangabad (Chhatrapati Sambhajinagar)</option>
+                            <option value="thane">Thane</option>
+                            <option value="kolhapur">Kolhapur</option>
+                            <option value="other">Other District / Rural</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plot Area -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Plot Area (Sq. Ft)</label>
+                    <div class="relative">
+                        <input type="number" id="area" placeholder="e.g. 1000" min="100" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pl-10 input-focus transition-all" required>
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-400">
+                            <i class="fa-solid fa-ruler-combined"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number of Floors -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Number of Floors</label>
+                    <div class="relative">
+                        <input type="number" id="floors" placeholder="e.g. 1 (Ground only)" min="1" max="10" value="1" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pl-10 input-focus transition-all" required>
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-400">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Construction Quality -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Construction Quality</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="quality" value="basic" class="peer sr-only" required>
+                            <div class="rounded-lg border-2 border-gray-200 p-3 text-center hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all">
+                                <div class="text-xs font-semibold text-gray-500 peer-checked:text-blue-600 mb-1">Basic</div>
+                                <div class="text-lg text-gray-600"><i class="fa-solid fa-home"></i></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="quality" value="standard" class="peer sr-only" checked>
+                            <div class="rounded-lg border-2 border-gray-200 p-3 text-center hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all">
+                                <div class="text-xs font-semibold text-gray-500 peer-checked:text-blue-600 mb-1">Standard</div>
+                                <div class="text-lg text-gray-600"><i class="fa-solid fa-star"></i></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="quality" value="premium" class="peer sr-only">
+                            <div class="rounded-lg border-2 border-gray-200 p-3 text-center hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all">
+                                <div class="text-xs font-semibold text-gray-500 peer-checked:text-blue-600 mb-1">Premium</div>
+                                <div class="text-lg text-gray-600"><i class="fa-solid fa-gem"></i></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-4 mr-2 mb-2 transition-all transform hover:-translate-y-1 shadow-md flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> Calculate Estimate
+                </button>
+            </form>
+            
+            <div class="mt-6 text-xs text-gray-400 text-center">
+                THIS PROJECT IS CREATED BY KJCOEMR STUDENTS OF FE_DIV-F_ROLL NO-43,44,45,46,47,48,49
+            </div>
+        </div>
+
+        <!-- Result Section (Initially Hidden) -->
+        <div id="resultsPanel" class="lg:col-span-8 hidden animate-fade-in">
+            
+            <!-- Total Cost Card -->
+            <div class="glass-panel rounded-2xl p-6 md:p-8 mb-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-3xl"></div>
+                <div class="relative z-10">
+                    <h2 class="text-xl font-medium opacity-90 mb-2">Total Estimated Construction Cost</h2>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-5xl font-bold tracking-tight" id="displayTotalCost">₹0</span>
+                    </div>
+                    <p class="mt-2 opacity-80 text-sm">
+                        For <span id="displayArea" class="font-bold">0</span> sq.ft built-up area in <span id="displayDistrict" class="capitalize font-bold">District</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Material Quantity Table -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-blue-500"></i> Material Requirements
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 rounded-l-lg">Material</th>
+                                    <th scope="col" class="px-4 py-3">Quantity</th>
+                                    <th scope="col" class="px-4 py-3 rounded-r-lg text-right">Approx Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialTableBody">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cost Breakdown Chart -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 w-full flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-purple-500"></i> Cost Distribution
+                    </h3>
+                    <div class="w-64 h-64 relative">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                    <div class="mt-4 w-full grid grid-cols-2 gap-2 text-xs text-gray-500">
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Material (60%)</div>
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-500"></span> Labor (25%)</div>
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-400"></span> Finishing (10%)</div>
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-gray-400"></span> Others (5%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex gap-4 no-print">
+                <button onclick="window.print()" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg text-sm px-5 py-3 transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Print Estimate
+                </button>
+                <button onclick="document.getElementById('calculatorForm').reset(); document.getElementById('resultsPanel').classList.add('hidden'); window.scrollTo(0,0);" class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium rounded-lg text-sm px-5 py-3 transition-colors">
+                    Start New Calculation
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-400 text-sm pb-8 no-print">
+        <p>&copy; 2026 Maharashtra Construction Estimator. Created with AI.</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Constants for estimation (Market Rates 2025-26)
+        const RATES = {
+            base: {
+                basic: 1700,    // Rs per sqft
+                standard: 2300,
+                premium: 3200
+            },
+            districtMultiplier: {
+                mumbai: 1.45,
+                thane: 1.25,
+                pune: 1.15,
+                nagpur: 1.0,
+                nashik: 1.0,
+                aurangabad: 0.95,
+                kolhapur: 0.95,
+                other: 0.90
+            }
+        };
+
+        // Thumb rules per Sq Ft of Built-up Area
+        const MATERIAL_RATIOS = {
+            cement: { factor: 0.43, unit: 'Bags', costPerUnit: 420 }, // 0.43 bags per sqft
+            steel: { factor: 4, unit: 'kg', costPerUnit: 75 },       // 4kg per sqft
+            sand: { factor: 1.9, unit: 'cu.ft', costPerUnit: 65 },    // 1.9 cft per sqft
+            aggregate: { factor: 1.35, unit: 'cu.ft', costPerUnit: 45 }, // 1.35 cft per sqft
+            bricks: { factor: 14, unit: 'Nos', costPerUnit: 12 },    // 14 bricks per sqft
+            paint: { factor: 0.15, unit: 'Liters', costPerUnit: 350 }, // Paint
+            tiles: { factor: 1.2, unit: 'sq.ft', costPerUnit: 60 }   // Flooring
+        };
+
+        let myChart = null;
+
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 1. Get Inputs
+            const district = document.getElementById('district').value;
+            const plotArea = parseFloat(document.getElementById('area').value);
+            const floors = parseInt(document.getElementById('floors').value);
+            const quality = document.querySelector('input[name="quality"]:checked').value;
+
+            // 2. Calculate Built-up Area (Simple assumption: Built-up is equal to plot area * floors for this simple calc)
+            // In reality, built-up might be less due to setbacks, but user input implies "Area to build"
+            const totalBuiltUpArea = plotArea * floors;
+
+            // 3. Calculate Rate
+            let ratePerSqFt = RATES.base[quality];
+            const multiplier = RATES.districtMultiplier[district] || 1.0;
+            
+            // Adjust rate based on district
+            ratePerSqFt = Math.round(ratePerSqFt * multiplier);
+
+            // 4. Calculate Total Cost
+            const totalCost = totalBuiltUpArea * ratePerSqFt;
+
+            // 5. Update UI - Header
+            document.getElementById('displayTotalCost').innerText = formatCurrency(totalCost);
+            document.getElementById('displayArea').innerText = totalBuiltUpArea.toLocaleString();
+            document.getElementById('displayDistrict').innerText = district;
+
+            // 6. Generate Material Table
+            generateMaterialTable(totalBuiltUpArea, quality);
+
+            // 7. Render Chart
+            renderChart(totalCost);
+
+            // 8. Show Results
+            const resultsPanel = document.getElementById('resultsPanel');
+            resultsPanel.classList.remove('hidden');
+            
+            // Smooth scroll
+            resultsPanel.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function generateMaterialTable(area, quality) {
+            const tbody = document.getElementById('materialTableBody');
+            tbody.innerHTML = '';
+
+            // Quality multiplier for material costs (Premium uses better materials)
+            let costMultiplier = 1;
+            if(quality === 'premium') costMultiplier = 1.3;
+            if(quality === 'basic') costMultiplier = 0.9;
+
+            const materials = [
+                { key: 'cement', name: 'Cement', icon: 'fa-layer-group' },
+                { key: 'steel', name: 'Steel (TMT)', icon: 'fa-bars' },
+                { key: 'bricks', name: 'Bricks/Blocks', icon: 'fa-cube' },
+                { key: 'sand', name: 'Sand', icon: 'fa-mound' },
+                { key: 'aggregate', name: 'Aggregate', icon: 'fa-shapes' },
+                { key: 'tiles', name: 'Flooring/Tiles', icon: 'fa-border-all' },
+                { key: 'paint', name: 'Paint', icon: 'fa-fill-drip' }
+            ];
+
+            materials.forEach(mat => {
+                const ratio = MATERIAL_RATIOS[mat.key];
+                const quantity = Math.ceil(area * ratio.factor);
+                const estimatedCost = quantity * ratio.costPerUnit * costMultiplier;
+
+                const row = `
+                    <tr class="bg-white border-b hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 font-medium text-gray-900 flex items-center gap-2">
+                            <i class="fa-solid ${mat.icon} text-gray-400 w-5"></i> ${mat.name}
+                        </td>
+                        <td class="px-4 py-3">
+                            ${quantity.toLocaleString()} <span class="text-xs text-gray-500">${ratio.unit}</span>
+                        </td>
+                        <td class="px-4 py-3 text-right font-medium">
+                            ${formatCurrency(estimatedCost)}
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Add a row for Labor (Approx 25-30% of total usually, but here we just list it)
+            // We won't calculate exact labor amount in table to keep it materials focused, 
+            // but labor is implied in the total cost at the top.
+        }
+
+        function renderChart(totalCost) {
+            const ctx = document.getElementById('costChart').getContext('2d');
+            
+            // Approximate Breakdown
+            const materialCost = totalCost * 0.60;
+            const laborCost = totalCost * 0.25;
+            const finishingCost = totalCost * 0.10;
+            const otherCost = totalCost * 0.05;
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Materials (Cement, Steel, etc.)', 'Labor Charges', 'Finishing & Interiors', 'Permits & Misc'],
+                    datasets: [{
+                        data: [materialCost, laborCost, finishingCost, otherCost],
+                        backgroundColor: [
+                            '#3b82f6', // Blue
+                            '#22c55e', // Green
+                            '#fb923c', // Orange
+                            '#9ca3af'  // Gray
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // Hide default legend to use custom one
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatCurrency(context.raw);
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%',
+                }
+            });
+        }
+    </script>
+</body>
+</html>
